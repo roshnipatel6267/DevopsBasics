@@ -20,6 +20,11 @@ steps:
     goals: 'package'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
+
+- script: |
+    ls -R $(System.DefaultWorkingDirectory)
+  displayName: 'List Files in Working Directory'
+  
 - task: CopyFiles@2
   inputs:
     Contents: '**/.war'
