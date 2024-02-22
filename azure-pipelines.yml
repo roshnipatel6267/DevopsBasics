@@ -2,7 +2,7 @@ trigger:
 - master
 
 pool:
-  vmImage: ubuntu-latest  
+  vmImage: ubuntu-latest
 
 steps:
 - script: |
@@ -17,18 +17,19 @@ steps:
   inputs:
     mavenPomFile: 'pom.xml'
     mavenOptions: '-Xmx3072m'
-    goals: 'package'
+    goals: 'install'
     publishJUnitResults: true
     testResultsFiles: '**/surefire-reports/TEST-*.xml'
 
-- script: |
-    ls -R $(System.DefaultWorkingDirectory)
-  displayName: 'List Files in Working Directory'
-  
 - task: CopyFiles@2
   inputs:
-    Contents: '**/.war'
+    Contents: '**/*.war'
     TargetFolder: '$(build.artifactstagingdirectory)'
+
+- script: |
+    ls -R $(build.artifactstagingdirectory)
+  displayName: 'List Contents of Artifact Staging Directory'
+
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
