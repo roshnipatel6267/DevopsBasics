@@ -8,9 +8,9 @@ jobs:
 - job: BuildAndTest
   displayName: 'Build and Test'
   steps:
-  - task: UseJavaVersion@1
+  - task: JavaToolInstaller@0
     inputs:
-      versionSpec: '1.8'
+      versionSpec: '8'
       addToPath: true
 
   - task: Maven@3
@@ -23,3 +23,9 @@ jobs:
       publishJUnitResults: true
       testResultsFiles: '**/surefire-reports/TEST-*.xml'
       goals: 'package'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: 'drop'
+      publishLocation: 'Container'
