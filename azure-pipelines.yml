@@ -2,30 +2,21 @@ trigger:
 - master
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: ubuntu-latest  
 
-jobs:
-- job: BuildAndTest
-  displayName: 'Build and Test'
-  steps:
-  - task: JavaToolInstaller@0
-    inputs:
-      versionSpec: '8'
-      addToPath: true
+steps:
+- script: |
+    sudo apt-get update
+    sudo apt-get install -y openjdk-8-jdk  # Install JDK 8
+    export JAVA_HOME_8_X64=/usr/lib/jvm/java-8-openjdk-amd64
+    export PATH=$PATH:$JAVA_HOME_8_X64/bin
+    java -version  # Verify Java version
+  displayName: 'Set Up JDK 8'
 
-  - task: Maven@3
-    inputs:
-      mavenPomFile: 'pom.xml'
-      mavenOptions: '-Xmx3072m'
-      javaHomeOption: 'JDKVersion'
-      jdkVersionOption: '1.8'
-      jdkArchitectureOption: 'x64'
-      publishJUnitResults: true
-      testResultsFiles: '**/surefire-reports/TEST-*.xml'
-      goals: 'package'
-
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: 'drop'
-      publishLocation: 'Container'
+- task: Maven@3
+  inputs:
+    mavenPomFile: 'pom.xml'
+    mavenOptions: '-Xmx3072m'
+    goals: 'package'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
